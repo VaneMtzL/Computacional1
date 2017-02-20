@@ -1,0 +1,266 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{vmargin}
+\usepackage{setspace}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{float} 
+
+\begin{document}
+\begin{center}
+\includegraphics[scale=0.5]{unison-logo.png}
+\\
+\vspace{0.5cm}
+UNIVERSIDAD DE SONORA \\
+\vspace{0.5cm}
+DIVISIÓN DE CIENCIAS EXACTAS Y NATURALES \\
+\vspace{0.5cm}
+DEPARTAMENTO DE FÍSICA\\
+\vspace{0.5cm}
+LICENCIATURA EN FÍSICA\\
+\vspace{0.5cm}
+FÍSICA COMPUTACIONAL I
+
+\vspace{2 cm}
+\hrule
+\vspace{1 cm}
+
+{\huge \bfseries {Iniciándose con Python}}
+
+\vspace{1 cm}
+\hrule
+\vspace{2 cm}
+Martinez López Lizbeth Vanessa \\ 
+\vspace{1 cm}
+Profesor del curso\\
+Dr. Carlos Lizárraga\\
+\vspace{2 cm}
+16 de Febrero del 2017
+\end{center}
+\pagebreak
+
+\begin{doublespace}
+
+\hrule
+\section*{Resumen}
+En este reporte se muestran los resultados obtenidos al utilizar por primera vez Python. Nuevamente se hace uso de los datos recopilados de la Universidad de Wyoming, para hacer gráficas como histogramas y diagramas de caja, de esta forma podemos hacer un análisis y sacar conclusiones sobre el comportamiento de los datos.
+
+\vspace{0.6 cm}
+\hrule
+
+\vspace{0.6 cm}
+
+\section{Introducción}
+Python es un lenguaje de programación interpretado, su sintaxis es legible, es decir, con código fácil de leer. Python soporta distintos tipos de programación como orientada objetos, imperativa y funcional.
+\\
+
+En Python se puede hacer un gran número de cosas, sin embargo en esta actividad nos enfocamos en la lectura de datos, creación de tablas y graficación de ciertas variables como: CAPE (Energía Potencial Disponible Convectiva o Convective Available Potential Energy por sus siglas en inglés) y Agua Precipitable. 
+\\
+
+Los datos utilizados fueron los obtenidos por la Universidad de Wyoming, siendo los datos recopilados por la estación de Albuquerque los que he tratado para la realización de esta actividad. 
+
+\section{Desarrollo}
+\subsection{Obtención y limpieza de datos}
+En la actividad anterior se recopilaron los datos de sondeo para el año 2016, a las 00Z y 12Z. Para esta práctica se hizo uso del archivo que contiene dichos datos de sondeo, con el comando egrep se obtuvo únicamente la información de fecha, CAPE y agua precipitable. El comando empleado fue el siguiente:
+
+\begin{verbatim}
+cat sondeos.txt | egrep -i "Observations|CAPE|water"| sed -e "/12Z/,+2d" 
+>> Datos00Z.txt
+\end{verbatim}
+
+Con este comando se pudo seleccionar los renglones que tenían las palabras ''Observations'', ''CAPE'' y ''Water'', es decir, aquellos que contienen la información requerida. La parte de:
+\begin{verbatim} sed -e "/12Z/,+2d" >> Datos00Z.txt \end{verbatim} 
+Permite excluir los datos que son para la hora que no se quiere, en este caso sólo se requieren los de 00Z, por lo que se excluyen aquellos que son para 12Z. Lo mismo se hace para obtener los datos de la hora 12Z.
+\\
+
+Ya teniendo los archivos con los datos que se quieren, se hace uso de Emacs para la limpieza de datos, es decir, dejar sólo la fecha y los números que hay en CAPE y agua precipitable. Se hace uso de Esc + x y el comando query-replace, para reemplazar todos aquellos espacios y palabras con nada antes de la fecha, y con comas entre la fecha y CAPE, y entre CAPE y agua precipitable.
+
+\subsection{Tablas y Graficación en Python}
+Con los archivos limpios, se crean documentos separados por comas (csv) y con estos archivos se trabaja en Python. Por medio de la terminal en la carpeta donde se ubican los archivos, se abre Jupyter y se comienza la programación con el siguiente código:
+\begin{verbatim}
+import pandas as pd
+import numpy as np
+import matplotlib as plt
+df = pd.read_csv("/home/vanemtzl/computacional/Datos de todos los meses/
+Actividad 3/Datos00Z.csv")
+\end{verbatim}
+Con esto, importamos todo lo que necesitamos como pandas, numpy y matplotlib, lo siguiente es leer el archivo csv.
+
+\begin{verbatim}
+df.head(20)
+\end{verbatim}
+Con esto, obtenemos una tabla con los datos de los archivos csv, al ser demasiados, sólo pedimos que se muestren 20.
+\\
+
+\begin{center}
+\includegraphics[scale=0.6]{Tabla00Z.png} \includegraphics[scale=0.6]{Tabla12Z.png}
+\\
+
+A la izquierda se encuentra la tabla para 00Z y a la derecha la tabla para 12Z.
+\end{center}
+
+\begin{verbatim}
+df.describe()
+\end{verbatim}
+Nos muestra una tabla con información de los archivos, así como la cantidad de datos, los cuartiles, el promedio, dato mínimo y máximo y desviación estándar.
+
+\begin{verbatim}
+df.hist(u'CAPE',bins=20)
+\end{verbatim}
+Esto nos permite hacer un histograma de la variable que queramos, en este caso CAPE y definimos la cantidad de cajas que se quieren,en este caso 20. 
+\\
+
+\begin{center}
+\includegraphics[scale=0.7]{00Z.png} \includegraphics[scale=0.7]{12Z.png}
+\\
+A la izquierda se encuentra la tabla para 00Z y a la derecha la tabla para 12Z.
+\end{center}
+\begin{verbatim}
+df.boxplot(column=u'CAPE',return_type='axes')
+\end{verbatim}
+Con este código, podemos hacer un diagrama de cajas para todo el archivo.
+
+\begin{verbatim}
+df['month']=pd.DatetimeIndex(df[u' Fecha']).month
+df.boxplot(column=u'CAPE', by=u'month')
+\end{verbatim}
+Con esto, también se hacen diagramas de caja, pero en este caso comparativo. Para este trabajo se hizo un diagrama comparativo de todos los meses.
+
+\section{Resultados}
+\subsection{CAPE}
+Las siglas CAPE (Convective Available Potential Energy) hacen referencia a la energia potencial disponible para la convección en un momento dado. Se trata de un parámetro que nos indica cuánta energía está disponible para la convección en caso de que ésta se inicie.
+\\
+
+Para el caso de los datos de la estación de Albuquerque, se muestran las siguientes gráficas:
+
+\subsection*{Para 00Z}
+\begin{center}
+\includegraphics[scale=0.8]{CAPE00Z.png}
+
+Histograma
+\end{center}
+
+El histograma nos muestra una gran dispersión en los datos para 00Z, pues la mayoría de los datos se concentran en la primer clase (caja).
+
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{boxplot00Z.png}
+
+Diagrama de cajas
+\end{center}
+Este diagrama de cajas está elaborado para todos los datos del archivo. En él se puede observar que hay mucha dispersión en los datos, hay precencia de muchos ceros y es por ello que se detectan bastantes datos atípicos.
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{boxplotmeses00Z.png}
+
+Diagrama de cajas comparativo
+\end{center}
+Con este diagrama de cajas comparativo, podemos concluir que el mes en el que hay mejor distribución de los datos es en Julio, pues a pesar de que hay dispersión, es menor que en los demás meses.
+
+\subsection*{Para 12Z}
+\begin{center}
+\includegraphics[scale=0.8]{CAPE12Z.png}
+
+Histograma
+\end{center}
+
+El histograma nos muestra que hay una gran dispersión en los datos para 12Z, pues la mayoría de los datos se concentran en la primer clase (caja).
+
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{boxplot12Z.png}
+
+Diagrama de cajas
+\end{center}
+Este diagrama de cajas está elaborado para todos los datos del archivo. En él se puede observar que hay mucha dispersión en los datos, ni siquiera se presenta la caja, pues sólo se muestran datos atípicos, esto indica que hay presencia de muchos ceros en los datos.
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{boxplotmeses12Z.png}
+
+Diagrama de cajas comparativo
+\end{center}
+Con este diagrama de cajas comparativo, podemos concluir que el mes en el que hay mejor distribución de los datos es en Agosto, pues a pesar de que hay dispersión, es menor que en los demás meses, además sólo hay presencia de un dato atípico.
+\subsection{Agua precipitable}
+El agua precipitable es el contenido de humedad en la atmósfera; se mide como el espesor vertical que ocuparía si toda el agua cayera.
+\\
+
+Para el caso de los datos de la estación de Albuquerque, se muestran las siguientes gráficas:
+
+\pagebreak
+\subparagraph*{Para 00Z}
+\begin{center}
+\includegraphics[scale=0.8]{Agua00Z.png}
+
+Histograma
+\end{center}
+
+El histograma nos muestra que para el agua precipitable, los datos están mejor distribuidos, sin embargo, la clase 3 (tercer caja) es la que contiene más datos, y las clases 18 y 19 son las que contienen menos datos.
+
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{aguaboxplot00Z.png}
+
+Diagrama de cajas
+\end{center}
+Este diagrama de cajas está elaborado para todos los datos del archivo. En él se puede observar que hay mayor dispersión en los datos sobre la media, pues hay mayor concentración de datos hacia abajo de la media (línea roja), esto se puede ver, porque la media tiende más hacia los datos menores.
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{mesesaguaboxplot00Z.png}
+
+Diagrama de cajas comparativo
+\end{center}
+En este diagrama de cajas comparativo, podemos ver que para todos los meses los datos se ven distribuidos de manera casi simétrica, sin embargo hay leve dispersión en la mayoría. Se puede concluir que Septiembre y Octubre son los meses que tienen mejor distribución en los datos respecto a la media.
+
+\subsection*{Para 12Z}
+\begin{center}
+\includegraphics[scale=0.8]{Agua12Z.png}
+
+Histograma
+\end{center}
+
+El histograma nos muestra que para el agua precipitable, hay más datos en la clase 3 (tercer caja) y la clase 20 es la que contiene menos datos.
+
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{aguaboxplot12Z.png}
+
+Diagrama de cajas
+\end{center}
+Este diagrama de cajas está elaborado para todos los datos del archivo. En él se puede observar que hay mayor dispersión en los datos sobre la media, pues hay mayor concentración de datos hacia abajo de la media (línea roja), esto se puede ver, porque la media tiende más hacia los datos menores.
+\begin{center}
+\vspace{1 cm}
+
+\includegraphics[scale=0.8]{mesesaguaboxplot12Z.png}
+
+Diagrama de cajas comparativo
+\end{center}
+En este diagrama de cajas comparativo, podemos ver que es el mes de Octubre el que tiene mejor distribución de los datos respecto a la media, sin embargo hay presencia de datos atípicos. En sí para todos los meses se puede ver dispersión en los datos.
+\section{Conclusión}
+Python es un lenguaje de programación bastante sencillo y con código fácil de leer para nosotros. En lo personal, creo que es un buen lenguaje de programación y tiene muchas herramientas que nos son y serán útiles. En esta práctica, se pudieron emplear conocimientos que se han estado adquiriendo en estadística, y dichos conocimientos pudieron ser plasmados gracias a la graficación en Python.
+
+\newpage
+\renewcommand{\refname}{\section{Referencias}}
+\begin{thebibliography}{9}
+\bibitem{a1} \textsc{$https://es.wikipedia.org/wiki/Python$}
+
+\bibitem{b1} \textsc{$http://www.meteoillesbalears.com/?p=623$}
+
+\bibitem{c1} \textsc{$http://weather.uwyo.edu/upperair/sounding.html$}
+
+\bibitem{d1} \textsc{$http://bibliotecadigital.ilce.edu.mx/sites/ciencia/volumen3/ciencia3/
+\\
+127/htm/sec_18.htm$}
+\end{thebibliography}
+
+\end{doublespace}
+\end{document}
