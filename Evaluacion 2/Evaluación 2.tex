@@ -1,0 +1,169 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{vmargin}
+\usepackage{setspace}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{parskip}
+\graphicspath{ {images/} }
+\usepackage{float} 
+
+\begin{document}
+\begin{center}
+\includegraphics[scale=0.5]{unison-logo.png}
+\\
+\vspace{0.5cm}
+UNIVERSIDAD DE SONORA \\
+\vspace{0.5cm}
+DIVISIÓN DE CIENCIAS EXACTAS Y NATURALES \\
+\vspace{0.5cm}
+DEPARTAMENTO DE FÍSICA\\
+\vspace{0.5cm}
+LICENCIATURA EN FÍSICA\\
+\vspace{0.5cm}
+FÍSICA COMPUTACIONAL I
+
+\vspace{2 cm}
+\hrule
+\vspace{1 cm}
+
+{\huge \bfseries {El ciclo de actividad magnética solar. Evaluación 2}}
+
+\vspace{1 cm}
+\hrule
+\vspace{2 cm}
+Martinez López Lizbeth Vanessa \\ 
+\vspace{1 cm}
+Profesor del curso\\
+Dr. Carlos Lizárraga Celaya\\
+\vspace{2 cm}
+26 Abril del 2017
+\end{center}
+\pagebreak
+
+\begin{doublespace}
+\hrule
+\section*{Resumen}
+Para la evaluación se realizó una transformada discreta de furier para el archivo de datos que contiene el promedio del número de manchas solares por mes, proporcionado por la nasa y encontrar los modos que cumplían con la frecuencia que se obtiene en un período de 11 años o bien 132 meses.
+\vspace{0.6 cm}
+\hrule
+
+\vspace{0.6 cm}
+
+
+\section*{Respuesta a las preguntas}
+\begin{enumerate}
+\item \textbf{De los datos proporcionados, utiliza una transformada discreta de Fourier, para encontrar la frecuencia del ciclo principal. Muestra una gráfica con los principales modos encontrados.}
+\begin{center}
+\includegraphics[height=10.5 cm, width= 15 cm]{modos.png}
+\end{center}
+\textbf{\textit{Procedimiento para obtener la transformada de Furier}}
+
+En la actividad de evaluación se menciona que el ciclo solar o ciclo de actividad magnética solar es regular con un periodo principal de 11 años aproximadamente, con esto tenemos que la frecuencia en 1/año es 0.09091 aproximadamente y en 1/mes es 0.007576 aproximadamente. Para el caso de esta actividad, utilicé la columna de mes y la de número de manchas. 
+
+Para comenzar, descargué el archivo proporcionado por la nasa y con Emacs hice un archivo separado por comas, de esta manera sería más fácil leerlo con pandas. Ya con el dato preparado, en Python importé las bibliotecas necesarios e hice lectura del archivo para iniciar con la graficación. El archivo contenía una columna que no me servía, y por ello utilicé el comando \textit{del df['Unnamed: 6']} para eliminarla. 
+
+Con el siguiente código, verifiqué si había precencia de celdas vacías en las columnas:
+\begin{verbatim}
+df.apply(lambda x: sum(x.isnull()), axis=0)
+\end{verbatim}
+
+Al ver que no había renglones donde no hubiera datos, continué con la graficación. Vi que el número de datos en mi archivo es 3213 y empleé el siguiente código para realizar la gráfica de transformada de furier:
+
+\begin{verbatim}
+from scipy.fftpack import fft, fftfreq, fftshift
+# number of signal points
+N = 3213
+# sample spacing
+T = 1
+x = df['Mes']
+y = df['No. manchas']
+yf = fft(y)
+xf = fftfreq(N, T)
+xf = fftshift(xf)
+yplot = fftshift(yf)
+import matplotlib.pyplot as plt
+plt.plot(xf, 2.0/N * np.abs(yplot))
+plt.xlim(0, 0.03)
+fig=plt.gcf()
+fig.set_size_inches(7,7)
+plt.title('Transformada de Furier para datos de manchas solares')
+
+plt.xlabel("Frecuencia (1/mes)")
+plt.ylabel("Número de manchas")
+
+plt.grid()
+plt.show()
+\end{verbatim}
+
+Esto me permitió graficar el número de manchas en el eje y y la frecuencia en el eje x, N es el número de datos y T el 'periodo' o bien, la separación entre los datos. Para poner las etiquetas de los modos encontrados, primero busqué los que tendrían una frecuencia similar a la del periodo principal, para ello usé lo siguiente:
+
+\begin{verbatim}
+print(np.where(a[:,]>15))
+b= a[a[:,]>15]
+b
+\end{verbatim}
+Con esto encontré los picos cuya amplitud superara el valor de 15, pues a simple vista vi que los picos que me interesaban analizar eran esos. Seleccionó los modos que estaban en un rango cercano a 0.007 de frecuencia. Los modos que cumplían con eso eran 23,24 y 25
+
+\begin{verbatim}
+#Número de manchas
+A1= 2*np.absolute(yf[23,]/N)
+A2= 2*np.absolute(yf[24,]/N)
+A3= 2*np.absolute(yf[25,]/N)
+
+#Frecuencia
+f1= xf[int(N/2 +23),]
+f2= xf[int(N/2 +24),]
+f3= xf[int(N/2 +25),]
+
+#Periodo
+p1= 1/f1
+p2= 1/f2
+p3= 1/f3
+\end{verbatim}
+Con esta parte de código hice las operaciones necesarias para obtener las amplitudes, frecuencias y períodos, para de esta manera verificar que efectivamente tenían una frecuencia cercana a 0.007 y un período cercano a 11 años. Ya con los modos ubicados, volví a graficar etiquetando. Utilicé el mismo código para graficar, pero agregando lo siguiente:
+
+\begin{verbatim}
+plt.text(0.007,41,"1")
+plt.text(0.0077,38,"2")
+plt.text(.0083,32,"3")
+\end{verbatim}
+
+\item \textbf{¿Encuentras un solo ciclo principal o un conjunto de ciclos con frecuencia cercana? ¿Cuál sería el promedio del conjunto de frecuencias?} Un conjunto de ciclos con frecuencia cercana, el promedio del conjunto de frecuencias es: 0.00746965452848 1/mes.
+
+\pagebreak
+
+\item \textbf{¿Que otros ciclos relevantes encuentras? Proporciona una tabla con las amplitudes de los ciclos.}
+
+\begin{table}[ht!]
+\centering
+\caption{Otros ciclos y sus amplitudes}
+\label{my-label}
+\begin{tabular}{|l|l|l|}
+\hline
+Otros modos & Frecuencia (1/mes) & Amplitud      \\ \hline
+1           & 0.00093370681606   & 22.7991836131 \\ \hline
+2           & 0.00124494242141   & 15.2828121366 \\ \hline
+3           & 0.00155617802677   & 13.7359051105 \\ \hline
+4           & 0.00591347650171   & 13.0648949851 \\ \hline
+5           & 0.00809212573918   & 13.5629086055 \\ \hline
+6           & 0.00840336134454   & 30.9080378809 \\ \hline
+7           & 0.00902583255524   & 14.1215419264 \\ \hline
+\end{tabular}
+\end{table}
+
+\item \textbf{Lo que han encontrado hasta ahora son ciertas regularidades, incluso hay pronósticos de un rango para el número de manchas solares. ¿Cómo crees que es posible predecir el número de manchas?} Con un análisis de transformada de furier y haciendo lo de la actividad 7, es decir reconstruir la gráfica para el promedio mensual de las manchas mensuales, usando funciones de senos y cosenos, podemos observar el error relativo y así determinar que tan buena es la aproximación o predicción del número de manchas.
+
+\end{enumerate}
+ 
+    
+     
+    
+
+ 
+
+\end{doublespace}
+
+\end{document}
