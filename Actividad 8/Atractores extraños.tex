@@ -1,0 +1,134 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{vmargin}
+\usepackage{setspace}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{parskip}
+\graphicspath{ {images/} }
+\usepackage{float} 
+
+\begin{document}
+\begin{center}
+\includegraphics[scale=0.5]{unison-logo.png}
+\\
+\vspace{0.5cm}
+UNIVERSIDAD DE SONORA \\
+\vspace{0.5cm}
+DIVISIÓN DE CIENCIAS EXACTAS Y NATURALES \\
+\vspace{0.5cm}
+DEPARTAMENTO DE FÍSICA\\
+\vspace{0.5cm}
+LICENCIATURA EN FÍSICA\\
+\vspace{0.5cm}
+FÍSICA COMPUTACIONAL I
+
+\vspace{2 cm}
+\hrule
+\vspace{1 cm}
+
+{\huge \bfseries {Atractores extraños. El efecto mariposa}}
+
+\vspace{1 cm}
+\hrule
+\vspace{2 cm}
+Martinez López Lizbeth Vanessa \\ 
+\vspace{1 cm}
+Profesor del curso\\
+Dr. Carlos Lizárraga Celaya\\
+\vspace{2 cm}
+15 de Mayo del 2017
+\end{center}
+\pagebreak
+
+\begin{doublespace}
+\hrule
+\section*{Resumen}
+En la presente práctica, se analiza el sistema de Lorenz, además se desarrolló el código para obtener el Atractor de Lorenz en Python, de manera estática y animada, de esta manera podemos seguir su comportamiento.
+\vspace{0.6 cm}
+\hrule
+
+\vspace{0.6 cm}
+
+\section{Introducción}
+
+La palabra 'caos' generalmente es utilizada para referirnos al desorden, al desconcierto, descontrol, entre otras cosas, sin embargo, en matemáticas y física nos referimos al caos como ''al comportamiento impredecible, y que parece ser errático, de distintos sistemas que varían de acuerdo a las condiciones iniciales. Este comportamiento es determinista, pero la apariencia de los fenómenos es aleatoria."$_1$ Es por ello que hablamos de un movimiento caótico al referirnos al movimiento que es sensible a las condiciones iniciales. 
+
+En esta práctica se hace bastante referencia al caos, pues fue Lorenz, un matemático interesado en la meteorología que desarrolló la mayor parte de su carrera en el MIT, quien prácticamente inició con la Teoría del Caos al presentar los resultados del problema que analizaba. En el atractor de Lorenz podemos ver precisamente un movimiento caótico.
+
+\section{Sistema de Lorenz}
+Fue en en 1963, cuando Lorenz trabajaba en la simplificación del modelo atmosférico; Lorenz se interesaba en el problema de la convección en la atmósfera terrestre y fue por ello que simplificó las ecuaciones de Navier-Stokes de la mecánica de fluidos, hasta tal punto en el que la simplificación era demasiado drástica que se podría creer que las ecuaciones ya no tenían ninguna relación con el comportamiento real de la atmósfera.
+
+La simplificación de estas ecuaciones generaron el modelo atmosférico de Lorenz, quien se dio cuenta que era un modelo sumamente interesante. Las ecuaciones de Lorenz dependen únicamente de 3 variables, x, y y z, de manera que cada punto del espacio (x,y,z) representa un estado de la atmósfera y para estudiar su evolución hay que seguir un campo de vectores.
+
+Al modelo atmosférico de Lorenz se le llamó un modelo de juguete, pues es considerado demasiado simple, ya que como se mencionó, depende de sólo tres parámetros. Las ecuaciones diferenciales que presentan este modelo son las siguientes: 
+
+
+$$\frac{\delta x}{\delta t} = \sigma \left( y- x \right)$$
+$$\frac{\delta y}{\delta t} = x \left( \rho- z \right) -y$$
+$$\frac{\delta z}{\delta t} = xy - \beta z$$
+
+Donde $\sigma, \rho, \beta$ son parámetros mayores a 0.
+
+\subsection{Atractor de Lorenz}
+
+El atractor de Lorenz es un sistema dinámico determinista tridimensional no lineal derivado de las ecuaciones del modelo atmosférico de Lorenz. Como ya se mencionó, los parámetros  $\sigma, \rho, \beta > 0$ y para ciertos valores de estos parámetros, el sistema muestra un movimiento caótico, dándonos así un atractor extraño. 
+
+Los valores generalmente utilizados para los parámetros son:
+
+$$\sigma = 10$$
+$$\beta  = \frac{8}{3}$$
+$$\rho  = 28$$ 
+
+El atractor de Lorenz tiene la forma de una mariposa, se cree que esto podría ser la inspiración al nombre de 'efecto mariposa' en la Teoría del Caos.
+
+\section{Teoría del caos y efecto mariposa}
+La teoría del caos es la denominación popular de la rama de las matemáticas, la física y otras ciencias, en la cual se dice que algunos fenómenos son increíblemente sensibles a las variaciones en las condiciones iniciales y tienen una impredecibilidad inherente. Los sistemas que se tratan en esta tería son ciertos tipos de sistemas complejos y sistemas dinámicos.
+
+El efecto mariposa es un concepto de la teoría del caos, en el cual se dice que dadas unas circunstancias peculiares de el tiempo y condiciones iniciales de un determinado sistema dinámico caótico, cualquier pequeña discrepancia entre dos situaciones con una variación pequeña en los datos iniciales, acabará dando lugar a situaciones donde ambos sistemas evolucionan en ciertos aspectos de forma completamente diferente.
+
+\section{Gráficas del atractor de Lorenz}
+Para obtener el atractor de Lorenz de forma estática en Python, se hizo uso del código proporcionado por la página de matplotlib. En el caso de la animación, se pretende hacer la simulación de una partícula en movimiento sobre el atractor de Lorenz, para ello se usó el código proporcionado por Jakevdp. Los resultados obtenidos fueron los siguientes:
+
+\begin{center}
+\includegraphics[scale=1.1]{lorenz}
+\end{center}
+
+Podemos ver la forma de mariposa que se menciona en el texto, la gráfica está realizada con el valor de los parámetros que se mencionaron anteriormente. 
+
+\begin{center}
+\includegraphics[scale=.8]{particula}
+\end{center}
+
+Esto es una pequeña demostración, de lo que aparece en la animación, podemos ver varias partículas que siguen una trayectoria sobre el atractor de Lorenz.
+
+\section{Conclusión}
+La teoría del caos es una teoría bastante famosa en matemáticas, física y otras ciencias, el estudio de sistemas caóticos es algo que se viene estudiando desde hace décadas, y fue el análisis y solución de un problema lo cual llevó a desarrollar esta teoría. Existen muchos atractores extraños que dan más ejemplos de sistemas caóticos, los cuales tienen resultados muy interesantes.
+
+\newpage
+\renewcommand{\refname}{\section{Referencias}}
+\begin{thebibliography}{9}
+\bibitem{a1} \textsc{$http://definicion.de/caos/f$}
+
+\bibitem{b1} \textsc{$https://cuentos-cuanticos.com/2016/10/03/el-atractivo-de-lorenz/$}
+
+\bibitem{c1} \textsc{$http://www.chaos-math.org/es/caos-vii-atractores-extranos$}
+
+\bibitem{d1} \textsc{$https://es.wikipedia.org/wiki/Atractor\_de\_Lorenz$}
+
+\bibitem{e1} \textsc{$http://www.nodo50.org/ciencia\_popular/articulos/caos.htm$}
+
+\bibitem{f1} \textsc{$https://es.wikipedia.org/wiki/Teor\%C3\%ADa\_del\_caos$}
+
+\bibitem{g1} \textsc{$https://es.wikipedia.org/wiki/Efecto\_mariposa$}
+
+\bibitem{h1} \textsc{$https://matplotlib.org/2.0.0/examples/mplot3d/lorenz_attractor.html$}
+
+\bibitem{i1} \textsc{$https://jakevdp.github.io/blog/2013/02/16/animating-the-lorentz-system-in-3d/$}
+\end{thebibliography}
+
+
+\end{doublespace}
+\end{document}
